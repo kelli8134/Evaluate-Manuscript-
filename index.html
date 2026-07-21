@@ -3,293 +3,377 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Manuscript Pattern Analyzer</title>
+<title>Novel Diagnostics Lab</title>
 <style>
 :root{
-  --bg:#f5f3ee; --panel:#fffdf8; --ink:#25231f; --muted:#6d675d;
-  --line:#ded8ce; --accent:#675c4c; --soft:#eee8de; --warn:#8a5f28;
-  --good:#4d6a57; --bad:#8a4444;
+  --bg:#f4f1ea; --panel:#fffdf9; --ink:#25231f; --muted:#70695f;
+  --line:#ddd6ca; --accent:#5d5143; --soft:#eee7dc; --warn:#91662b;
+  --good:#4e6f59; --bad:#8c4545; --info:#5d6680;
 }
 *{box-sizing:border-box}
-body{margin:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:var(--bg);color:var(--ink)}
-header{padding:24px 28px 14px;max-width:1300px;margin:auto}
-h1{font-family:Georgia,serif;margin:0 0 6px;font-size:30px}
-.subtitle{color:var(--muted);line-height:1.45}
-main{max-width:1300px;margin:auto;padding:0 28px 36px}
-.grid{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(330px,.9fr);gap:18px}
-.panel{background:var(--panel);border:1px solid var(--line);border-radius:15px;padding:18px;box-shadow:0 2px 12px rgba(60,45,25,.04)}
-textarea{width:100%;min-height:480px;border:1px solid var(--line);border-radius:12px;padding:15px;font:16px/1.6 Georgia,serif;background:white;resize:vertical}
-.controls{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
-button{border:0;border-radius:10px;padding:11px 16px;font-weight:700;cursor:pointer;background:var(--accent);color:white}
-button.secondary{background:var(--soft);color:var(--ink);border:1px solid var(--line)}
-.filelabel{display:inline-flex;align-items:center;border-radius:10px;padding:10px 14px;font-weight:700;cursor:pointer;background:var(--soft);border:1px solid var(--line)}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+header{max-width:1450px;margin:auto;padding:26px 28px 14px}
+h1{font-family:Georgia,serif;margin:0;font-size:32px}
+.subtitle{margin-top:6px;color:var(--muted);line-height:1.45;max-width:1050px}
+main{max-width:1450px;margin:auto;padding:0 28px 40px}
+.layout{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(420px,.95fr);gap:18px}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:18px;box-shadow:0 2px 10px rgba(50,40,25,.04)}
+textarea{width:100%;min-height:560px;border:1px solid var(--line);border-radius:12px;padding:16px;font:16px/1.6 Georgia,serif;background:white;resize:vertical}
+.controls{display:flex;gap:9px;flex-wrap:wrap;margin-top:12px}
+button,.filelabel{border:0;border-radius:10px;padding:10px 14px;font-weight:700;cursor:pointer}
+button{background:var(--accent);color:white}
+button.secondary,.filelabel{background:var(--soft);color:var(--ink);border:1px solid var(--line)}
 input[type=file]{display:none}
-.note{font-size:13px;color:var(--muted);margin-top:10px;line-height:1.45}
+.note{font-size:13px;color:var(--muted);line-height:1.45;margin-top:10px}
 .tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px}
-.tab{background:var(--soft);color:var(--ink);padding:9px 12px}
+.tab{background:var(--soft);color:var(--ink);padding:8px 11px}
 .tab.active{background:var(--accent);color:white}
 .section{display:none}.section.active{display:block}
-.scoreRow{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px}
-.score{background:var(--soft);padding:12px;border-radius:11px;text-align:center}
-.score strong{display:block;font-size:24px;font-family:Georgia,serif}
-.score span{font-size:12px;color:var(--muted)}
-h2{font-size:20px;margin:6px 0 12px;font-family:Georgia,serif}
-h3{font-size:16px;margin:18px 0 8px}
-.finding{border-top:1px solid var(--line);padding:11px 0}
-.finding:first-child{border-top:0}
-.label{display:inline-block;font-size:11px;text-transform:uppercase;letter-spacing:.06em;font-weight:800;padding:4px 7px;border-radius:999px;background:var(--soft);margin-right:6px}
-.label.high{background:#f3dede;color:var(--bad)}
-.label.med{background:#f5e7cf;color:var(--warn)}
-.label.low{background:#e2ece5;color:var(--good)}
-.example{margin-top:7px;padding:9px 10px;background:white;border-left:3px solid var(--line);font-family:Georgia,serif;font-size:14px;line-height:1.45}
-table{width:100%;border-collapse:collapse;font-size:14px}
+.metricGrid{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin-bottom:14px}
+.metric{background:var(--soft);border-radius:11px;padding:11px;text-align:center}
+.metric strong{display:block;font:700 23px Georgia,serif}
+.metric span{font-size:11px;color:var(--muted)}
+.summary{background:var(--soft);border-radius:11px;padding:13px;line-height:1.48;margin-bottom:14px}
+h2{font:700 20px Georgia,serif;margin:6px 0 10px}
+h3{font-size:15px;margin:18px 0 8px}
+table{width:100%;border-collapse:collapse;font-size:13px}
 td,th{padding:8px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
-th{color:var(--muted);font-size:12px;text-transform:uppercase;letter-spacing:.04em}
-.pill{display:inline-block;background:var(--soft);border-radius:999px;padding:5px 9px;margin:3px 4px 3px 0;font-size:13px}
-.empty{color:var(--muted);padding:18px 4px}
-.summaryBox{background:var(--soft);padding:13px;border-radius:11px;line-height:1.5;margin-bottom:14px}
-details{border-top:1px solid var(--line);padding:9px 0}
-summary{cursor:pointer;font-weight:700}
+th{color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.05em}
+.pill{display:inline-block;background:var(--soft);border-radius:999px;padding:5px 9px;margin:3px 4px 3px 0;font-size:12px}
+.finding{border-top:1px solid var(--line);padding:10px 0}
+.finding:first-child{border-top:0}
+.badge{display:inline-block;font-size:10px;text-transform:uppercase;letter-spacing:.05em;font-weight:800;padding:4px 7px;border-radius:999px;margin-right:6px}
+.badge.high{background:#f2dddd;color:var(--bad)}
+.badge.med{background:#f5e7cf;color:var(--warn)}
+.badge.low{background:#e2ece5;color:var(--good)}
+.badge.info{background:#e5e8f0;color:var(--info)}
+.example{margin-top:7px;padding:9px 10px;background:white;border-left:3px solid var(--line);font:14px/1.45 Georgia,serif}
+.bar{height:10px;background:#e7e0d6;border-radius:999px;overflow:hidden}
+.fill{height:100%;background:var(--accent)}
 .small{font-size:12px;color:var(--muted)}
-@media(max-width:850px){.grid{grid-template-columns:1fr}.scoreRow{grid-template-columns:repeat(2,1fr)}textarea{min-height:360px}}
+.empty{color:var(--muted);padding:16px 3px}
+@media(max-width:900px){.layout{grid-template-columns:1fr}.metricGrid{grid-template-columns:repeat(2,1fr)}textarea{min-height:390px}}
 </style>
 </head>
 <body>
 <header>
-  <h1>Manuscript Pattern Analyzer</h1>
-  <div class="subtitle">A private, browser-based first-pass review for repetition, prose habits, dialogue patterns, grammar signals, and writing patterns readers sometimes associate with AI-generated fiction.</div>
+  <h1>Novel Diagnostics Lab</h1>
+  <div class="subtitle">Private, browser-based fiction analysis for grammar signals, repetition, rhythm, dialogue, pacing, author intrusion, show-vs.-tell patterns, and prose habits that can read as formulaic or AI-like when overused.</div>
 </header>
 <main>
-<div class="grid">
-  <section class="panel">
-    <h2>Manuscript text</h2>
-    <textarea id="text" placeholder="Paste a scene, chapter, or manuscript here..."></textarea>
-    <div class="controls">
-      <button id="analyze">Analyze manuscript</button>
-      <label class="filelabel">Open .txt file<input id="file" type="file" accept=".txt,text/plain"></label>
-      <button class="secondary" id="sample">Load sample</button>
-      <button class="secondary" id="clear">Clear</button>
-    </div>
-    <div class="note">Your text stays in your browser in this version. The app does not claim to determine authorship. “AI-like” findings identify repetitive or formulaic prose patterns worth reviewing.</div>
-  </section>
+<div class="layout">
+<section class="panel">
+  <h2>Manuscript text</h2>
+  <textarea id="text" placeholder="Paste one scene, several scenes, a chapter, or a larger manuscript section here..."></textarea>
+  <div class="controls">
+    <button id="analyze">Analyze</button>
+    <label class="filelabel">Open .txt<input type="file" id="file" accept=".txt,text/plain"></label>
+    <button class="secondary" id="sample">Load sample</button>
+    <button class="secondary" id="clear">Clear</button>
+  </div>
+  <div class="note">This version runs locally in your browser. It does not upload your manuscript. AI-like analysis is a style review, not an authorship detector.</div>
+</section>
 
-  <section class="panel">
-    <div class="tabs">
-      <button class="tab active" data-tab="overview">Overview</button>
-      <button class="tab" data-tab="repetition">Repetition</button>
-      <button class="tab" data-tab="style">AI-like patterns</button>
-      <button class="tab" data-tab="grammar">Grammar</button>
-      <button class="tab" data-tab="dialogue">Dialogue</button>
-    </div>
-    <div id="overview" class="section active"><div class="empty">Paste text and select <b>Analyze manuscript</b>.</div></div>
-    <div id="repetition" class="section"></div>
-    <div id="style" class="section"></div>
-    <div id="grammar" class="section"></div>
-    <div id="dialogue" class="section"></div>
-  </section>
+<section class="panel">
+  <div class="tabs">
+    <button class="tab active" data-tab="overview">Overview</button>
+    <button class="tab" data-tab="rhythm">Rhythm</button>
+    <button class="tab" data-tab="repetition">Repetition</button>
+    <button class="tab" data-tab="dialogue">Dialogue</button>
+    <button class="tab" data-tab="craft">Craft</button>
+    <button class="tab" data-tab="ai">AI-like</button>
+    <button class="tab" data-tab="grammar">Grammar</button>
+  </div>
+  <div id="overview" class="section active"><div class="empty">Paste text and press <b>Analyze</b>.</div></div>
+  <div id="rhythm" class="section"></div>
+  <div id="repetition" class="section"></div>
+  <div id="dialogue" class="section"></div>
+  <div id="craft" class="section"></div>
+  <div id="ai" class="section"></div>
+  <div id="grammar" class="section"></div>
+</section>
 </div>
 </main>
 
 <script>
-const stop = new Set(("the a an and or but if then than that this these those to of in on at by for from with as is are was were be been being it its he she they them his her their we you i me my our your not no do does did have has had can could would should will just very so into out up down over under again further once here there when where why how all any both each few more most other some such only own same too s t don don’t didn didn’t isn isn’t aren aren’t wasn wasn’t weren weren’t").split(/\s+/));
+const STOP = new Set(("the a an and or but if then than that this these those to of in on at by for from with as is are was were be been being it its he she they them his her their we you i me my our your not no do does did have has had can could would should will just very so into out up down over under again further once here there when where why how all any both each few more most other some such only own same too").split(/\s+/));
 
-const vagueWords = ["almost","somehow","something","slightly","somewhat","seemed","seems","seem","perhaps","maybe","just","really","very","little","a little","for a moment","for a second","somewhere","different","strange","wrong","ordinary","familiar"];
-const filterWords = ["felt","feel","feels","noticed","notice","realized","realize","saw","see","heard","hear","wondered","wonder","knew","know","thought","think","seemed"];
-const gestureTerms = ["looked","glanced","nodded","shrugged","smiled","sighed","frowned","blinked","swallowed","breathed","turned","stared","leaned","paused","froze","went still","raised an eyebrow","shook his head","shook her head"];
-const aiPatterns = [
-  {name:"Not X, but Y contrast", re:/\bnot\b[^.!?]{0,75}\bbut\b/gi, why:"Repeated rhetorical contrast can make prose feel overly polished or formulaic."},
-  {name:"It wasn't X. Not really.", re:/\bit (?:wasn't|was not)[^.!?]*\.\s*not really\b/gi, why:"A punchy correction pattern that becomes noticeable when repeated."},
-  {name:"Something had changed", re:/\bsomething had changed\b/gi, why:"Vague dramatic phrasing can feel generic when used often."},
-  {name:"Neither of them", re:/\bneither of them\b/gi, why:"Often appears in balanced, restrained reaction beats."},
-  {name:"For a moment", re:/\bfor a moment\b/gi, why:"A common pacing phrase that can accumulate quickly."},
-  {name:"He/She didn't know", re:/\b(?:he|she) (?:didn't|did not) know\b/gi, why:"Useful interiority, but repeated uncertainty endings can become a pattern."},
-  {name:"The room went quiet", re:/\b(?:the )?(?:room|hall|table|group) (?:went|fell) quiet\b/gi, why:"A familiar dramatic beat that can become predictable."},
-  {name:"No one said anything", re:/\bno one said anything\b/gi, why:"Common silence beat; worth varying if frequent."},
-  {name:"It was enough", re:/\bit was enough\b/gi, why:"Compressed emotional conclusion that can become repetitive."},
-  {name:"Not an answer", re:/\b(?:it )?wasn['’]?t an answer\b|\bnot an answer\b/gi, why:"A tidy interpretive phrase often used as a scene beat."}
+const gestureTerms=["looked","glanced","nodded","shrugged","smiled","sighed","frowned","blinked","swallowed","breathed","turned","stared","leaned","paused","froze","went still","raised an eyebrow","shook his head","shook her head","looked back","looked away"];
+const filterTerms=["felt","feel","feels","noticed","notice","realized","realize","saw","see","heard","hear","wondered","wonder","knew","know","thought","think","seemed","seem","watched"];
+const tellingTerms=["felt","was afraid","was angry","was nervous","was worried","was sad","was happy","was confused","was frustrated","was relieved","realized","understood","knew that","could tell","it was obvious","clearly","obviously"];
+const authorIntrusion=[
+  ["Explains intent after dialogue", /\b(?:she|he) (?:wasn't|was not) saying\b[^.!?]{0,140}\b(?:she|he) was saying\b/gi],
+  ["Explains what a character really meant", /\bwhat (?:she|he) meant was\b/gi],
+  ["Reader interpretation supplied", /\bit was clear that\b|\bit was obvious that\b|\bclearly,\b|\bobviously,\b/gi],
+  ["Explains why an action happened", /\bnot because\b[^.!?]{0,100}\bbut because\b/gi]
+];
+const aiPatterns=[
+  ["Not X, but Y",/\bnot\b[^.!?]{0,80}\bbut\b/gi,"Balanced contrast can feel formulaic if it appears frequently."],
+  ["Not really",/\bnot really\b/gi,"A common correction beat that becomes noticeable through repetition."],
+  ["Something had changed",/\bsomething had changed\b/gi,"Vague dramatic phrasing that can read generically if repeated."],
+  ["For a moment",/\bfor a moment\b/gi,"Common pacing phrase; accumulation can flatten rhythm."],
+  ["Neither of them",/\bneither of them\b/gi,"Balanced reaction beat often used in restrained prose."],
+  ["No one said anything",/\bno one said anything\b/gi,"Common silence beat that may become predictable."],
+  ["He/She didn't know",/\b(?:he|she) (?:didn't|did not) know\b/gi,"Repeated uncertainty language can create a recognizable cadence."],
+  ["It was enough",/\bit was enough\b/gi,"Compact emotional conclusion that can become repetitive."],
+  ["Went quiet",/\b(?:room|hall|group|table|air) (?:went|fell) quiet\b/gi,"Familiar dramatic beat."],
+  ["Not an answer",/\b(?:wasn't|was not) an answer\b|\bnot an answer\b/gi,"Tidy interpretive phrasing often used as a dramatic beat."]
 ];
 
 function esc(s){return String(s).replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#039;"}[m]))}
-function words(text){return (text.toLowerCase().match(/[a-z]+(?:['’][a-z]+)?/g)||[])}
-function sentences(text){return (text.replace(/\n+/g," ").match(/[^.!?]+[.!?]+|[^.!?]+$/g)||[]).map(s=>s.trim()).filter(Boolean)}
-function paragraphs(text){return text.split(/\n\s*\n/).map(x=>x.trim()).filter(Boolean)}
-function severity(count, denom, medium=2.5, high=5){
-  const r = denom ? count/denom*1000 : 0;
-  return r>=high?"high":r>=medium?"med":"low";
+function words(t){return (t.toLowerCase().match(/[a-z]+(?:['’][a-z]+)?/g)||[])}
+
+// Improved fiction sentence splitter:
+// protects common abbreviations, ellipses, decimal numbers, and respects quoted punctuation better.
+function splitSentences(text){
+  let t=text.replace(/\r/g," ");
+  const protectedMap=[];
+  function protect(match){
+    const token=`§${protectedMap.length}§`;
+    protectedMap.push(match);
+    return token;
+  }
+  t=t.replace(/\b(?:Mr|Mrs|Ms|Dr|Prof|Sr|Jr|St|Mt|Gen|Lt|Col|Sgt|Capt|Cmdr|Rev|Sen|Rep)\./g,protect);
+  t=t.replace(/\b[A-Z]\./g,protect);
+  t=t.replace(/\d+\.\d+/g,protect);
+  t=t.replace(/\.{3,}/g,protect);
+
+  let out=[];
+  let start=0;
+  for(let i=0;i<t.length;i++){
+    const ch=t[i];
+    if(ch==="."||ch==="!"||ch==="?"){
+      let j=i+1;
+      while(j<t.length && /[”"'’)\]]/.test(t[j])) j++;
+      if(j===t.length || /\s/.test(t[j])){
+        let s=t.slice(start,j).trim();
+        if(s) out.push(s);
+        start=j;
+      }
+    }
+  }
+  let tail=t.slice(start).trim();
+  if(tail) out.push(tail);
+  out=out.map(s=>{
+    protectedMap.forEach((v,idx)=>{s=s.replaceAll(`§${idx}§`,v)});
+    return s.replace(/\s+/g," ").trim();
+  }).filter(Boolean);
+  return out;
 }
-function badge(level){return `<span class="label ${level}">${level==="high"?"high":level==="med"?"noticeable":"mild"}</span>`}
-function phraseNgrams(ws,n){
-  const map=new Map();
+
+function paragraphs(t){return t.split(/\n\s*\n/).map(x=>x.trim()).filter(Boolean)}
+function dialogueSegments(t){
+  const arr=[]; const re=/[“"]([^”"]+)[”"]/g; let m;
+  while((m=re.exec(t))!==null) arr.push(m[1].trim());
+  return arr;
+}
+function narrativeText(t){return t.replace(/[“"][^”"]+[”"]/g," ")}
+function countRe(t,re){re.lastIndex=0;return (t.match(re)||[]).length}
+function median(a){if(!a.length)return 0; const s=[...a].sort((x,y)=>x-y); const m=Math.floor(s.length/2); return s.length%2?s[m]:(s[m-1]+s[m])/2}
+function ngrams(ws,n){
+  const m=new Map();
   for(let i=0;i<=ws.length-n;i++){
     const g=ws.slice(i,i+n).join(" ");
-    if(g.split(" ").every(w=>stop.has(w))) continue;
-    map.set(g,(map.get(g)||0)+1);
+    if(g.split(" ").every(w=>STOP.has(w))) continue;
+    m.set(g,(m.get(g)||0)+1);
   }
-  return [...map.entries()].filter(x=>x[1]>=2).sort((a,b)=>b[1]-a[1]);
+  return [...m.entries()].filter(x=>x[1]>=2).sort((a,b)=>b[1]-a[1]);
 }
-function topMeaningful(ws){
+function topWords(ws){
   const m=new Map();
-  ws.forEach(w=>{if(w.length>2&&!stop.has(w))m.set(w,(m.get(w)||0)+1)});
-  return [...m.entries()].sort((a,b)=>b[1]-a[1]).slice(0,25);
+  ws.forEach(w=>{if(w.length>2&&!STOP.has(w))m.set(w,(m.get(w)||0)+1)});
+  return [...m.entries()].sort((a,b)=>b[1]-a[1]).slice(0,30);
 }
-function findExamples(ss, re, limit=4){
-  const out=[]; ss.forEach(s=>{re.lastIndex=0;if(re.test(s)&&out.length<limit)out.push(s)}); return out;
-}
-function countRegex(text,re){re.lastIndex=0; return (text.match(re)||[]).length}
-function sentenceStarts(ss){
+function starts(ss){
   const m=new Map();
   ss.forEach(s=>{
-    const w=(s.toLowerCase().match(/^[“"'‘’(\[]*([a-z]+(?:['’][a-z]+)?)/)||[])[1];
-    if(w)m.set(w,(m.get(w)||0)+1);
+    const x=(s.toLowerCase().match(/^[“"'‘’(\[]*([a-z]+(?:['’][a-z]+)?)/)||[])[1];
+    if(x)m.set(x,(m.get(x)||0)+1);
   });
   return [...m.entries()].sort((a,b)=>b[1]-a[1]).slice(0,15);
 }
-function dialogueLines(text){
-  const re=/[“"]([^”"]+)[”"]/g; let m, arr=[];
-  while((m=re.exec(text))!==null) arr.push(m[1].trim());
-  return arr;
+function severity(count,wc,med=2,high=4){
+  const d=wc?count/wc*1000:0;
+  return d>=high?"high":d>=med?"med":"low";
 }
-function analyzeGrammar(ss,text){
-  const findings=[];
+function badge(level,label){
+  return `<span class="badge ${level}">${label||level}</span>`;
+}
+function examples(ss,re,limit=5){
+  const out=[];
+  for(const s of ss){re.lastIndex=0;if(re.test(s)&&out.length<limit)out.push(s)}
+  return out;
+}
+function grammarFlags(ss,text){
+  const f=[];
   ss.forEach(s=>{
-    if(/\b(\w+)\s+\1\b/i.test(s)) findings.push({type:"Repeated word",s});
-    if(/\b(?:could|would|should|might|must) of\b/i.test(s)) findings.push({type:"Possible “have” error",s});
-    if(/\bi\b/.test(s)) findings.push({type:"Lowercase “i”",s});
-    if(/\s{2,}/.test(s)) findings.push({type:"Double spacing",s});
-    if(/[!?.,]{2,}/.test(s) && !/\.{3}/.test(s)) findings.push({type:"Repeated punctuation",s});
-    const wc=words(s).length;
-    if(wc>45) findings.push({type:"Very long sentence",s});
-    if(wc>0 && wc<3 && !/[“"]/.test(s)) findings.push({type:"Very short fragment — review in context",s});
+    if(/\b([a-z]+)\s+\1\b/i.test(s))f.push(["Repeated word",s]);
+    if(/\b(?:could|would|should|might|must) of\b/i.test(s))f.push(["Possible “have” error",s]);
+    if(/\bi\b/.test(s))f.push(["Lowercase “i”",s]);
+    if(/\s{2,}/.test(s))f.push(["Double space",s]);
+    if(/[!?.,]{2,}/.test(s)&&!/\.\.\./.test(s))f.push(["Repeated punctuation",s]);
+    const n=words(s).length;
+    if(n>45)f.push(["Very long sentence",s]);
   });
-  // quote balance
-  const openCurly=(text.match(/“/g)||[]).length, closeCurly=(text.match(/”/g)||[]).length;
-  if(openCurly!==closeCurly) findings.unshift({type:"Quotation marks may be unbalanced",s:`Opening curly quotes: ${openCurly}; closing curly quotes: ${closeCurly}.`});
-  return findings;
+  const oq=(text.match(/“/g)||[]).length,cq=(text.match(/”/g)||[]).length;
+  if(oq!==cq)f.unshift(["Quotation marks may be unbalanced",`Opening curly quotes: ${oq}; closing curly quotes: ${cq}.`]);
+  return f;
 }
 function dialogueTags(text){
-  const tags=["said","asked","replied","whispered","murmured","shouted","called","answered","added"];
-  return tags.map(t=>[t,countRegex(text,new RegExp("\\b"+t+"\\b","gi"))]).filter(x=>x[1]).sort((a,b)=>b[1]-a[1]);
+  const tags=["said","asked","replied","whispered","murmured","shouted","called","answered","added","told"];
+  return tags.map(t=>[t,countRe(text,new RegExp("\\b"+t+"\\b","gi"))]).filter(x=>x[1]).sort((a,b)=>b[1]-a[1]);
 }
-function render(data){
-  const {text,ws,ss,ps}=data, wc=ws.length, sc=ss.length, pc=ps.length;
-  const avg=sc?wc/sc:0;
-  const repeats3=phraseNgrams(ws,3).filter(x=>x[1]>=3).slice(0,12);
-  const repeats4=phraseNgrams(ws,4).filter(x=>x[1]>=2).slice(0,12);
-  const top=topMeaningful(ws);
-  const starts=sentenceStarts(ss);
-  const grammar=analyzeGrammar(ss,text);
-  const dialogues=dialogueLines(text);
-  const tags=dialogueTags(text);
+function rangeCount(lengths,min,max){
+  return lengths.filter(n=>n>=min&&(max===Infinity||n<=max)).length;
+}
+function pct(n,d){return d?Math.round(n/d*100):0}
 
-  const aiFind=aiPatterns.map(p=>{
-    const c=countRegex(text,p.re); return {...p,count:c,examples:findExamples(ss,p.re)};
-  }).filter(x=>x.count>0).sort((a,b)=>b.count-a.count);
+function render(text){
+  const ws=words(text), ss=splitSentences(text), ps=paragraphs(text), wc=ws.length, sc=ss.length;
+  const lens=ss.map(s=>words(s).length).filter(n=>n>0);
+  const avg=sc?lens.reduce((a,b)=>a+b,0)/lens.length:0, med=median(lens), shortest=Math.min(...lens), longest=Math.max(...lens);
+  const ds=dialogueSegments(text), dw=ds.reduce((a,d)=>a+words(d).length,0), nw=Math.max(0,wc-dw);
+  const dialoguePct=pct(dw,wc), narrativePct=100-dialoguePct;
+  const r4=ngrams(ws,4).filter(x=>x[1]>=2).slice(0,20), r3=ngrams(ws,3).filter(x=>x[1]>=3).slice(0,20);
+  const gestures=gestureTerms.map(t=>[t,countRe(text,new RegExp("\\b"+t.replace(/ /g,"\\s+")+"\\b","gi"))]).filter(x=>x[1]).sort((a,b)=>b[1]-a[1]);
+  const filters=filterTerms.map(t=>[t,countRe(text,new RegExp("\\b"+t+"\\b","gi"))]).filter(x=>x[1]).sort((a,b)=>b[1]-a[1]);
+  const telling=tellingTerms.map(t=>[t,countRe(text,new RegExp("\\b"+t.replace(/ /g,"\\s+")+"\\b","gi"))]).filter(x=>x[1]).sort((a,b)=>b[1]-a[1]);
+  const tops=topWords(ws), sentenceStarts=starts(ss), gf=grammarFlags(ss,text), tags=dialogueTags(text);
 
-  const vague=vagueWords.map(term=>{
-    const c=countRegex(text,new RegExp("\\b"+term.replace(" ","\\s+")+"\\b","gi")); return [term,c]
-  }).filter(x=>x[1]).sort((a,b)=>b[1]-a[1]);
-  const filters=filterWords.map(term=>[term,countRegex(text,new RegExp("\\b"+term+"\\b","gi"))]).filter(x=>x[1]).sort((a,b)=>b[1]-a[1]);
-  const gestures=gestureTerms.map(term=>[term,countRegex(text,new RegExp("\\b"+term.replace(" ","\\s+")+"\\b","gi"))]).filter(x=>x[1]).sort((a,b)=>b[1]-a[1]);
+  const ai=aiPatterns.map(([name,re,why])=>({name,re,why,count:countRe(text,re),examples:examples(ss,re)})).filter(x=>x.count).sort((a,b)=>b.count-a.count);
+  const intrusion=authorIntrusion.map(([name,re])=>({name,re,count:countRe(text,re),examples:examples(ss,re)})).filter(x=>x.count).sort((a,b)=>b.count-a.count);
 
-  let patternLoad = aiFind.reduce((a,b)=>a+b.count,0) + repeats4.reduce((a,b)=>a+b[1]-1,0);
-  let aiRisk = wc ? Math.min(100, Math.round(patternLoad / wc * 2500)) : 0;
-  let repeatScore = wc ? Math.min(100, Math.round((repeats3.reduce((a,b)=>a+b[1],0)+repeats4.reduce((a,b)=>a+b[1],0))*1400/wc)) : 0;
-  let grammarScore = wc ? Math.min(100, Math.round(grammar.length*1000/wc*10)) : 0;
+  const bins=[
+    ["1–5 words",rangeCount(lens,1,5)],
+    ["6–10 words",rangeCount(lens,6,10)],
+    ["11–15 words",rangeCount(lens,11,15)],
+    ["16–20 words",rangeCount(lens,16,20)],
+    ["21–30 words",rangeCount(lens,21,30)],
+    ["31+ words",rangeCount(lens,31,Infinity)]
+  ];
+
+  const shortPct=pct(rangeCount(lens,1,5),lens.length);
+  const veryLongPct=pct(rangeCount(lens,31,Infinity),lens.length);
+  let rhythmNote=shortPct>45?"Very clipped":shortPct>30?"Short-sentence heavy":veryLongPct>20?"Long-sentence heavy":"Mixed / balanced";
+  const vocabDiversity=wc?Math.round(new Set(ws).size/wc*100):0;
 
   document.querySelector("#overview").innerHTML=`
-    <div class="scoreRow">
-      <div class="score"><strong>${wc.toLocaleString()}</strong><span>words</span></div>
-      <div class="score"><strong>${sc.toLocaleString()}</strong><span>sentences</span></div>
-      <div class="score"><strong>${avg.toFixed(1)}</strong><span>avg. words / sentence</span></div>
-      <div class="score"><strong>${pc.toLocaleString()}</strong><span>paragraphs</span></div>
+    <div class="metricGrid">
+      <div class="metric"><strong>${wc.toLocaleString()}</strong><span>words</span></div>
+      <div class="metric"><strong>${sc.toLocaleString()}</strong><span>sentences</span></div>
+      <div class="metric"><strong>${avg.toFixed(1)}</strong><span>avg. words / sentence</span></div>
+      <div class="metric"><strong>${med.toFixed(1)}</strong><span>median sentence</span></div>
+      <div class="metric"><strong>${dialoguePct}%</strong><span>dialogue</span></div>
+      <div class="metric"><strong>${narrativePct}%</strong><span>narrative</span></div>
+      <div class="metric"><strong>${vocabDiversity}%</strong><span>unique-word ratio</span></div>
+      <div class="metric"><strong>${ps.length}</strong><span>paragraphs</span></div>
     </div>
-    <div class="summaryBox"><b>Interpretation:</b> This tool does not determine whether AI wrote the text. It surfaces patterns that may make prose feel repetitive, formulaic, overly balanced, or mechanically polished. Review patterns in context before changing them.</div>
-    <h3>Review priority</h3>
-    <table>
-      <tr><th>Area</th><th>Signal</th><th>What it means</th></tr>
-      <tr><td>Repeated phrasing</td><td>${repeatScore<20?"Low":repeatScore<45?"Moderate":"High"}</td><td>${repeats3.length+repeats4.length} recurring 3–4 word phrases crossed the reporting threshold.</td></tr>
-      <tr><td>AI-like style patterns</td><td>${aiRisk<20?"Low":aiRisk<45?"Moderate":"High"}</td><td>Pattern density only—not an authorship score.</td></tr>
-      <tr><td>Grammar/mechanics</td><td>${grammar.length<5?"Low":grammar.length<15?"Review":"Higher"}</td><td>${grammar.length} heuristic flags. Many may be intentional fiction fragments.</td></tr>
-    </table>
+    <div class="summary"><b>First-pass interpretation:</b> Sentence rhythm is <b>${rhythmNote}</b>. The tool found <b>${r3.length+r4.length}</b> notable repeated phrases, <b>${intrusion.length}</b> author-intrusion pattern types, and <b>${gf.length}</b> grammar/mechanics flags. These are review signals, not automatic errors.</div>
     <h3>Most frequent meaningful words</h3>
-    <div>${top.map(x=>`<span class="pill">${esc(x[0])} · ${x[1]}</span>`).join("")||"<span class='small'>None</span>"}</div>
+    <div>${tops.map(x=>`<span class="pill">${esc(x[0])} · ${x[1]}</span>`).join("")}</div>
   `;
 
-  const phraseRows=[...repeats4.map(x=>[x[0],x[1],"4-word"]),...repeats3.map(x=>[x[0],x[1],"3-word"])]
-    .sort((a,b)=>b[1]-a[1]).slice(0,20);
+  document.querySelector("#rhythm").innerHTML=`
+    <h2>Sentence rhythm & pacing</h2>
+    <div class="metricGrid">
+      <div class="metric"><strong>${shortest}</strong><span>shortest sentence</span></div>
+      <div class="metric"><strong>${longest}</strong><span>longest sentence</span></div>
+      <div class="metric"><strong>${shortPct}%</strong><span>1–5 word sentences</span></div>
+      <div class="metric"><strong>${veryLongPct}%</strong><span>31+ word sentences</span></div>
+    </div>
+    <table><tr><th>Sentence length</th><th>Count</th><th>Share</th><th>Distribution</th></tr>
+      ${bins.map(([label,count])=>`<tr><td>${label}</td><td>${count}</td><td>${pct(count,lens.length)}%</td><td><div class="bar"><div class="fill" style="width:${pct(count,lens.length)}%"></div></div></td></tr>`).join("")}
+    </table>
+    <h3>Common sentence openings</h3>
+    <div>${sentenceStarts.map(x=>`<span class="pill">${esc(x[0])} · ${x[1]}</span>`).join("")}</div>
+    <div class="note">A low average is not automatically a problem in dialogue-heavy fiction. The distribution and median are more useful than the average alone.</div>
+  `;
+
+  const phraseRows=[...r4.map(x=>[x[0],x[1],"4-word"]),...r3.map(x=>[x[0],x[1],"3-word"])].sort((a,b)=>b[1]-a[1]).slice(0,30);
   document.querySelector("#repetition").innerHTML=`
-    <h2>Repeated words & phrases</h2>
-    <div class="summaryBox">Repeated language is not automatically bad. This view helps find phrases that may be invisible when scenes are revised separately.</div>
-    <h3>Recurring phrases</h3>
-    ${phraseRows.length?`<table><tr><th>Phrase</th><th>Count</th><th>Type</th></tr>${phraseRows.map(r=>`<tr><td>${esc(r[0])}</td><td>${r[1]}</td><td>${r[2]}</td></tr>`).join("")}</table>`:"<div class='empty'>No strong repeated phrase patterns found at this text length.</div>"}
+    <h2>Repetition</h2>
+    <div class="summary">Use this to catch patterns that are hard to notice when scenes are drafted and revised separately.</div>
+    <h3>Repeated phrases</h3>
+    ${phraseRows.length?`<table><tr><th>Phrase</th><th>Count</th><th>Type</th></tr>${phraseRows.map(r=>`<tr><td>${esc(r[0])}</td><td>${r[1]}</td><td>${r[2]}</td></tr>`).join("")}</table>`:"<div class='empty'>No strong repeated phrase pattern crossed the threshold.</div>"}
     <h3>Gestures & reaction beats</h3>
-    ${gestures.length?`<table><tr><th>Beat</th><th>Count</th><th>Density</th></tr>${gestures.slice(0,20).map(r=>`<tr><td>${esc(r[0])}</td><td>${r[1]}</td><td>${(r[1]/Math.max(wc,1)*1000).toFixed(1)} / 1,000 words</td></tr>`).join("")}</table>`:"<div class='empty'>No tracked gesture terms found.</div>"}
-    <h3>Sentence openings</h3>
-    <div>${starts.map(x=>`<span class="pill">${esc(x[0])} · ${x[1]}</span>`).join("")}</div>
+    ${gestures.length?`<table><tr><th>Beat</th><th>Count</th><th>Per 1,000 words</th></tr>${gestures.slice(0,25).map(r=>`<tr><td>${esc(r[0])}</td><td>${r[1]}</td><td>${(r[1]/Math.max(wc,1)*1000).toFixed(1)}</td></tr>`).join("")}</table>`:"<div class='empty'>No tracked gesture patterns found.</div>"}
   `;
 
-  document.querySelector("#style").innerHTML=`
-    <h2>AI-like prose pattern review</h2>
-    <div class="summaryBox"><b>Important:</b> These are stylistic tendencies, not evidence of AI authorship. A human writer can use every one of them. The concern is accumulation and predictability.</div>
-    ${aiFind.length?aiFind.map(f=>`
-      <div class="finding">
-        ${badge(severity(f.count,wc,1.5,3.5))}<b>${esc(f.name)}</b> — ${f.count} occurrence${f.count===1?"":"s"}
-        <div class="small">${esc(f.why)}</div>
-        ${f.examples.map(e=>`<div class="example">${esc(e)}</div>`).join("")}
-      </div>`).join(""):"<div class='empty'>No tracked formulaic patterns were found.</div>"}
-    <h3>Vague / atmospheric language</h3>
-    <div>${vague.slice(0,20).map(x=>`<span class="pill">${esc(x[0])} · ${x[1]}</span>`).join("")||"<span class='small'>No tracked terms.</span>"}</div>
+  const dAvg=ds.length?ds.reduce((a,d)=>a+words(d).length,0)/ds.length:0;
+  document.querySelector("#dialogue").innerHTML=`
+    <h2>Dialogue</h2>
+    <div class="metricGrid">
+      <div class="metric"><strong>${ds.length}</strong><span>quoted passages</span></div>
+      <div class="metric"><strong>${dAvg.toFixed(1)}</strong><span>avg. quoted words</span></div>
+      <div class="metric"><strong>${dialoguePct}%</strong><span>dialogue share</span></div>
+      <div class="metric"><strong>${ds.filter(d=>words(d).length>30).length}</strong><span>30+ word speeches</span></div>
+    </div>
+    <h3>Dialogue tags</h3>
+    ${tags.length?`<table><tr><th>Tag</th><th>Count</th></tr>${tags.map(x=>`<tr><td>${esc(x[0])}</td><td>${x[1]}</td></tr>`).join("")}</table>`:"<div class='empty'>No common dialogue tags found.</div>"}
+    <h3>Long speeches to review for natural voice</h3>
+    ${ds.filter(d=>words(d).length>30).slice(0,20).map(d=>`<div class="example">“${esc(d)}”</div>`).join("")||"<div class='empty'>No long speeches found.</div>"}
+    <div class="note">Character-by-character voice comparison will be more accurate once the app can identify speakers by name/tagging.</div>
+  `;
+
+  document.querySelector("#craft").innerHTML=`
+    <h2>Craft signals</h2>
+    <h3>Author-intrusion / over-explanation patterns</h3>
+    ${intrusion.length?intrusion.map(f=>`<div class="finding">${badge(severity(f.count,wc,1,2.5))}<b>${esc(f.name)}</b> — ${f.count}${f.examples.map(e=>`<div class="example">${esc(e)}</div>`).join("")}</div>`).join(""):"<div class='empty'>No tracked author-intrusion patterns found.</div>"}
+    <h3>Show-vs.-tell signals</h3>
+    <div>${telling.slice(0,25).map(x=>`<span class="pill">${esc(x[0])} · ${x[1]}</span>`).join("")||"<span class='small'>No tracked telling phrases.</span>"}</div>
     <h3>Filter words</h3>
-    <div>${filters.slice(0,20).map(x=>`<span class="pill">${esc(x[0])} · ${x[1]}</span>`).join("")||"<span class='small'>No tracked terms.</span>"}</div>
+    <div>${filters.slice(0,25).map(x=>`<span class="pill">${esc(x[0])} · ${x[1]}</span>`).join("")||"<span class='small'>No tracked filter words.</span>"}</div>
+    <div class="note">These words are not inherently wrong. The concern is whether they create distance from the point-of-view character or repeatedly explain what the scene already shows.</div>
+  `;
+
+  document.querySelector("#ai").innerHTML=`
+    <h2>AI-like prose pattern review</h2>
+    <div class="summary"><b>This is not an AI detector.</b> It identifies prose habits that can make fiction feel generic, overly balanced, repetitive, or mechanically polished when they accumulate.</div>
+    ${ai.length?ai.map(f=>`<div class="finding">${badge(severity(f.count,wc,1.3,3))}<b>${esc(f.name)}</b> — ${f.count} occurrence${f.count===1?"":"s"}<div class="small">${esc(f.why)}</div>${f.examples.map(e=>`<div class="example">${esc(e)}</div>`).join("")}</div>`).join(""):"<div class='empty'>No tracked AI-associated patterns found.</div>"}
   `;
 
   document.querySelector("#grammar").innerHTML=`
-    <h2>Grammar & mechanics signals</h2>
-    <div class="summaryBox">This is a fiction-aware heuristic pass, not a replacement for a full grammar engine. Sentence fragments and unusual punctuation may be deliberate.</div>
-    ${grammar.length?grammar.slice(0,80).map(g=>`<div class="finding"><span class="label med">${esc(g.type)}</span><div class="example">${esc(g.s)}</div></div>`).join(""):"<div class='empty'>No basic grammar/mechanics flags found.</div>"}
-  `;
-
-  const dAvg=dialogues.length?dialogues.reduce((a,d)=>a+words(d).length,0)/dialogues.length:0;
-  document.querySelector("#dialogue").innerHTML=`
-    <h2>Dialogue patterns</h2>
-    <div class="scoreRow">
-      <div class="score"><strong>${dialogues.length}</strong><span>quoted passages</span></div>
-      <div class="score"><strong>${dAvg.toFixed(1)}</strong><span>avg. dialogue words</span></div>
-      <div class="score"><strong>${tags.reduce((a,b)=>a+b[1],0)}</strong><span>tracked dialogue tags</span></div>
-      <div class="score"><strong>${dialogues.filter(x=>words(x).length>30).length}</strong><span>long dialogue passages</span></div>
-    </div>
-    <h3>Dialogue tag usage</h3>
-    ${tags.length?`<table><tr><th>Tag</th><th>Count</th></tr>${tags.map(x=>`<tr><td>${esc(x[0])}</td><td>${x[1]}</td></tr>`).join("")}</table>`:"<div class='empty'>No common dialogue tags detected.</div>"}
-    <h3>Long dialogue passages to review for voice</h3>
-    ${dialogues.filter(x=>words(x).length>30).slice(0,15).map(d=>`<div class="example">“${esc(d)}”</div>`).join("")||"<div class='empty'>No unusually long quoted passages found.</div>"}
-    <div class="note">Character-by-character voice comparison requires speaker labels or a structured manuscript format. A later version can add character profiles and compare vocabulary/rhythm by speaker.</div>
+    <h2>Grammar & mechanics</h2>
+    <div class="summary">This is a fiction-aware heuristic pass. Fragments, unusual punctuation, and short sentences may be intentional.</div>
+    ${gf.length?gf.slice(0,100).map(([type,s])=>`<div class="finding">${badge("med","review")}<b>${esc(type)}</b><div class="example">${esc(s)}</div></div>`).join(""):"<div class='empty'>No basic grammar/mechanics flags found.</div>"}
   `;
 }
+
 document.querySelector("#analyze").onclick=()=>{
-  const text=document.querySelector("#text").value.trim();
-  if(!text){alert("Paste manuscript text first.");return}
-  render({text,ws:words(text),ss:sentences(text),ps:paragraphs(text)});
+  const t=document.querySelector("#text").value.trim();
+  if(!t){alert("Paste manuscript text first.");return}
+  render(t);
 };
-document.querySelector("#clear").onclick=()=>{document.querySelector("#text").value="";["overview","repetition","style","grammar","dialogue"].forEach((id,i)=>document.querySelector("#"+id).innerHTML=i===0?'<div class="empty">Paste text and select <b>Analyze manuscript</b>.</div>':"")};
-document.querySelector("#sample").onclick=()=>{document.querySelector("#text").value=`Ethan looked at Neveh. For a moment, neither of them said anything.
+document.querySelector("#clear").onclick=()=>{
+  document.querySelector("#text").value="";
+  document.querySelectorAll(".section").forEach(x=>x.innerHTML="");
+  document.querySelector("#overview").innerHTML='<div class="empty">Paste text and press <b>Analyze</b>.</div>';
+};
+document.querySelector("#sample").onclick=()=>{
+document.querySelector("#text").value=`Ethan looked toward the chapel.
 
-“We shouldn't go back yet,” Sonia said. She wasn't saying they should abandon the investigation, but that they needed more information first.
+“What?” Neveh asked.
 
-Something had changed. Ethan didn't know what, exactly. He glanced toward the chapel and then looked back at the others.
+“Nothing.” He glanced back at her. For a moment, neither of them said anything.
 
-“It isn't an answer,” Mason said.
+Sonia folded her arms. “We shouldn't go back yet.”
 
-No one said anything. Not really. The room went quiet.
+She wasn't saying they should abandon the investigation. She was saying they needed more information first.
 
-Neveh nodded slightly. She felt something was wrong, but she couldn't explain why. For a moment, Ethan just watched her.`};
-document.querySelector("#file").onchange=(e)=>{
-  const f=e.target.files[0]; if(!f)return;
-  const r=new FileReader(); r.onload=()=>document.querySelector("#text").value=r.result; r.readAsText(f);
+Mason nodded. “That makes sense.”
+
+Something had changed, though Ethan didn't know what. He looked toward the chapel again.
+
+No one said anything.`;
+};
+document.querySelector("#file").onchange=e=>{
+  const f=e.target.files[0];if(!f)return;
+  const r=new FileReader();r.onload=()=>document.querySelector("#text").value=r.result;r.readAsText(f);
 };
 document.querySelectorAll(".tab").forEach(b=>b.onclick=()=>{
   document.querySelectorAll(".tab").forEach(x=>x.classList.remove("active"));
   document.querySelectorAll(".section").forEach(x=>x.classList.remove("active"));
-  b.classList.add("active"); document.querySelector("#"+b.dataset.tab).classList.add("active");
+  b.classList.add("active");document.querySelector("#"+b.dataset.tab).classList.add("active");
 });
 </script>
 </body>

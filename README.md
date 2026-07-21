@@ -1,13 +1,27 @@
-# Manuscript Pattern Analyzer
+# Novel Diagnostics Lab
 
-This folder is ready for GitHub Pages.
+A browser-based fiction manuscript analyzer.
 
-## Deploy
-1. Create a new GitHub repository.
-2. Upload `index.html` and `.nojekyll` to the root of the repository.
-3. In GitHub, open **Settings → Pages**.
-4. Under **Build and deployment**, choose **Deploy from a branch**.
-5. Choose **main** and **/(root)**, then Save.
-6. GitHub will provide the website address after deployment.
+## Current features
+- improved fiction sentence parsing
+- average and median sentence length
+- sentence-length distribution
+- dialogue vs narrative percentage
+- repeated meaningful words
+- repeated 3- and 4-word phrases
+- recurring gestures and reaction beats
+- common sentence openings
+- dialogue tag analysis
+- long-speech review
+- filter-word analysis
+- show-vs-tell signals
+- author-intrusion / over-explanation patterns
+- AI-like prose pattern review
+- basic grammar/mechanics heuristics
 
-The analyzer runs entirely in the visitor's browser. Manuscript text is not uploaded to a server by this app.
+## Privacy
+The manuscript is analyzed locally in the browser.
+
+## GitHub Pages
+Upload `index.html`, `.nojekyll`, and this README to a repository root.
+Then enable Settings → Pages → Deploy from a branch → main → /(root).
